@@ -8,7 +8,7 @@ html {
 
 .wf-loading p { font-family: sans-serif; }
 .wf-inactive p { font-family: sans-serif; }
-.wf-active p { font-family: 'Alegreya', sans-serif; width:400px; margin-left: 20px; }
+.wf-active p { font-family: 'Alegreya', sans-serif; width:auto; margin-left: 20px; }
 .wf-loading h1 { font-family: sans-serif; font-weight: 400; font-size: 24px; }
 .wf-inactive h1 { font-family: sans-serif; font-weight: 400; font-size: 24px; }
 .wf-active h1 { font-family: 'Aclonica', sans-serif; font-weight: 400; font-size: 24px; }
