@@ -137,6 +137,23 @@
     </div>
     <div id="footer" class="col-md-12">Thanks for visiting! &copy; 2014 Udacity</div>
   </div>
+  <noscript id="deferred-styles">
+      <link rel="stylesheet" types="text/css" href="css/style.css">
+      <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.css"/>
+  </noscript>
+  <script>
+  var loadDeferredStyles = function() {
+      var addStylesNode = document.getElementById("deferred-styles");
+      var replacement = document.createElement("div");
+      replacement.innerHTML = addStylesNode.textContent;
+      document.body.appendChild(replacement)
+      addStylesNode.parentElement.removeChild(addStylesNode);
+  };
+
+  var raf = requestAnimationFrame || mozRequestAnimationFrame || webkitRequestAnimationFrame || msRequestAnimationFrame;
+  if (raf) raf(function() { window.setTimeout(loadDeferredStyles, 0); });
+  else window.addEventListener('load', loadDeferredStyles);
+  </script>
   <script type="text/javascript" src="js/main.js"></script>
 </body>
 
