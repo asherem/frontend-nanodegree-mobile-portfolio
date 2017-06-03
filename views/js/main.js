@@ -405,6 +405,7 @@ var resizePizzas = function(size) {
   changeSliderLabel(size);
 
    // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
+   // getElementById is faster code, as well
   function determineDx (elem, size) {
     var oldWidth = elem.offsetWidth;
     var windowWidth = document.getElementById("randomPizzas").offsetWidth;
@@ -521,8 +522,8 @@ function updatePositions() {
     window.performance.mark("mark_start_frame");
 
     var items = document.getElementsByClassName('mover');
-    var scroll = document.body.scrollTop;
-    var constArray = [];
+    var scroll = document.body.scrollTop; // reduces # of lookups via variable
+    var constArray = []; // leverages caching for speed
     var i;
 
     for (i = 0; i < 5; i++) {
@@ -532,7 +533,7 @@ function updatePositions() {
     for (i = 0; i < items.length; i++) {
         var phase = constArray[i % 5];
         var left = -items[i].basicLeft + 1000 * phase + 'px';
-                    items[i].style.transform = "translateX("+left+") translateZ(0)";
+                    items[i].style.transform = "translateX("+left+") translateZ(0)"; // faster compared to original code
     }
 
     window.performance.mark("mark_end_frame");
@@ -543,7 +544,7 @@ function updatePositions() {
     }
 }
 
-/* Original Code-
+/* Original Code- note the improvements after
 
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
@@ -567,6 +568,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 */
 
+// New code- reduces # of pizzas on screen dynamically
+
 // runs updatePositions on scroll
 window.addEventListener('scroll', updatePositions);
 
@@ -574,7 +577,7 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
     var cols = 8;
     var s = 256;
-    var pizzaNum = (window.innerHeight / 75) + (window.innerWidth / 75);
+    var pizzaNum = (window.innerHeight / 75) + (window.innerWidth / 75); // dynamic reduction of pizzas
     for (var i = 0; i < pizzaNum; i++) {
         var elem = document.createElement('img');
         elem.className = 'mover';
