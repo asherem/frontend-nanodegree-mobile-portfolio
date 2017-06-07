@@ -1,11 +1,11 @@
 # Udacity's Front End Website Optimization Project
----
+
 The aim of this project is to ensure a Google PageSpeed score of at least 90 for `index.html`, as well as 
 achieving 60 FPS for `pizza.html`. This will be accomplished by optimizing images, re-writing code, and 
 re-structuring code blocks.
 
 ## Running The App
----
+
 This app is best considered alongside the original, which can be forked from [Udacity's own repo](https://github.com/udacity/frontend-nanodegree-mobile-portfolio).
 
 ### Instructions:
@@ -32,14 +32,14 @@ This app is best considered alongside the original, which can be forked from [Ud
 
 
 ## The Optimization: Step By Step
----
+
 The following pages have been optimized in my own repo.
 
 For now, avoid looking at the solutions if you can avoid it, and let the PageSpeed hints
 guide you.
 
 ### index.html
----
+
 Right now, the profile picture is far too large at 16 KB given how tiny it is. Ideally, it should be 
 around ~3 KB maximum. A good optimization code for ImageMagick is the following:
 
@@ -145,7 +145,7 @@ For a peculiar sort of FOUC event, if the CSS in `pizza.html` where likewise def
 brief flash before the load is completed.
 
 ### project-2048.html
----
+
 
 For images, the steps are the same as above. Make sure that you resize the original image down to its 
 actual display size to avoid using the browser's own compressive resources.
@@ -153,15 +153,15 @@ actual display size to avoid using the browser's own compressive resources.
 The rest is the same: set the JS files to `async`, and defer CSS shortly before `<body>` closes.
 
 ### project-mobile.html
----
+
 Follow the above instructions.
 
 ### project-webperf.html
----
+
 Follow the above instructions.
 
 ### pizza.html
----
+
 This is the page with the largest and most complex optimizations. Most of the work is done in JavaScript, 
 although there is some image optimization work, as well, particularly for the pizzeria image. It will 
 likely be around ~100 kb, this, which is large but still over 95% smaller than what it currently is.
@@ -229,14 +229,7 @@ of the element to a string with a pixel value. The line before deals with scroll
 the on-page motion.
 
 But `.left` is one of the many paint-triggering events in CSS, an effect which can be achieved through 
-the less-expensive `.transform:`
-
-```javascript
-    var left = -items[i].basicLeft + 1000 * phase + 'px';
- 		items[i].style.transform = "translateX("+left+") translateZ(0)";
-```
-
-In the end, we get the following code [adapted from mcs](https://discussions.udacity.com/t/project-4-how-do-i-optimize-the-background-pizzas-for-loop/36302?source_topic_id=248974):
+the less-expensive `.transform:` In the end, we get the following code [adapted from mcs](https://discussions.udacity.com/t/project-4-how-do-i-optimize-the-background-pizzas-for-loop/36302?source_topic_id=248974):
 
 ```javascript
 function updatePositions() {
@@ -244,8 +237,8 @@ function updatePositions() {
     window.performance.mark("mark_start_frame");
 
     var items = document.getElementsByClassName('mover');
-    var scroll = document.body.scrollTop;
-    var constArray = [];
+    var scroll = document.body.scrollTop; // reduces # of lookups via variable
+    var constArray = []; // leverages caching for speed
     var i;
 
     for (i = 0; i < 5; i++) {
@@ -254,8 +247,7 @@ function updatePositions() {
 
     for (i = 0; i < items.length; i++) {
         var phase = constArray[i % 5];
-        var left = -items[i].basicLeft + 1000 * phase + 'px';
-                    items[i].style.transform = "translateX("+left+") translateZ(0)";
+        items[i].style.transform = 'translateX(' + 100 * phase + 'px)'; // faster compared to original code
     }
 
     window.performance.mark("mark_end_frame");
@@ -293,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 According to [jshank](https://github.com/jshanks24/Udacity-Website-Optimization), there is some 
 fine-tuning to be made for the number of pizzas on screen, which ought to be loaded dynamically 
-rather than statically. The new code is as follows:  
+rather than statically. The new, adapted code is as follows:
 
 ```javascript
 // runs updatePositions on scroll
@@ -303,7 +295,7 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
     var cols = 8;
     var s = 256;
-    var pizzaNum = (window.innerHeight / 75) + (window.innerWidth / 75);
+    var pizzaNum = (window.innerHeight / 75) + (window.innerWidth / 75); // dynamic reduction of pizzas
     for (var i = 0; i < pizzaNum; i++) {
         var elem = document.createElement('img');
         elem.className = 'mover';
@@ -311,8 +303,9 @@ document.addEventListener('DOMContentLoaded', function() {
         elem.style.height = "100px";
         elem.style.width = "73.333px";
         elem.basicLeft = (i % cols) * s;
-        elem.style.top = (Math.floor(i / cols) * s) + 'px';
+        elem.style.left = (i % cols) * s + 'px';
         document.getElementById("movingPizzas1").appendChild(elem);
+        elem.style.top = (Math.floor(i / cols) * s) + 'px';
     }
     updatePositions();
 });
